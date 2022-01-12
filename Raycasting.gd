@@ -10,7 +10,13 @@ var vec_map = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	vec_map.resize(map_size.x * map_size.y)
+	vec_map[map_size.y * 2 + 20] = 1
+
+func _index_to_xy(i):
+	var x = i % int(map_size.x)
+	var y = int(i / map_size.x)
+	return [x, y]
 
 func _process(delta):
 	update()
@@ -24,6 +30,12 @@ func _draw():
 			var a1 = Vector2(cell_size.x * x, 0)
 			var b1 = Vector2(cell_size.x * x, map_size.y * y) 
 			draw_line(a1, b1, Color(255, 255, 255), 2)
+	#############################################################################	
+	# for i in range(vec_map):
+	# 	var x = y % i
+	# 	var y = int(i / map_size.y)
+	# 	print([x, y])	
+	# 	draw_rect(Rect2(w * int, HEIGHT - height, w, height), Color.white)
 	# 		draw_line(Vector2(0,0), Vector2(50, 50), Color(255, 0, 0), 1)
 	# for (int y = 0; y < vMapSize.y; y++)
 	# 	{
@@ -41,4 +53,9 @@ func _draw():
 func _input(ev):
 	if ev.is_action_pressed("ui_cancel"):
 		get_tree().quit()
+	if ev is InputEventMouseButton:
+		if ev.button_index == 1 and ev.pressed:
+			print("LMB")
+		if ev.button_index == 2 and ev.pressed:
+			print("RMB")
 
