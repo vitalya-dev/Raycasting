@@ -18,6 +18,9 @@ func _index_to_xy(i):
 	var y = int(i / map_size.x)
 	return [x, y]
 
+func _xy_to_index(xy):
+	return xy.y * map_size.x + xy.x
+
 func _process(delta):
 	update()
 
@@ -50,12 +53,15 @@ func _draw():
 	# 		}
 	# 	}
 
+func _mouse_to_vec(mouse):
+	return Vector2(int(mouse.x / cell_size.x), int(mouse.y / cell_size.y))
+
 func _input(ev):
 	if ev.is_action_pressed("ui_cancel"):
 		get_tree().quit()
 	if ev is InputEventMouseButton:
 		if ev.button_index == 1 and ev.pressed:
-			print("LMB")
+			vec_map[_xy_to_index(_mouse_to_vec(ev.position))] = 1
 		if ev.button_index == 2 and ev.pressed:
 			print("RMB")
 
