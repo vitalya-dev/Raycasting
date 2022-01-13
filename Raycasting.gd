@@ -9,6 +9,9 @@ var map_size = Vector2(int(426 / cell_size.x) + 1, int(240 / cell_size.y) + 1)
 var vec_map = []
 var player = Vector2(0, 0)
 var show_grid = false
+var draw_level = false
+var erase_level = false
+var elapsed_time = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -24,6 +27,7 @@ func _xy_to_index(xy):
 	return xy.y * map_size.x + xy.x
 
 func _process(delta):
+	elapsed_time = delta
 	update()
 
 func _draw_grid():
@@ -37,6 +41,7 @@ func _draw_grid():
 			draw_line(a1, b1, Color(255, 255, 255), 2)
 
 func _draw():
+	print(player)
 	if show_grid:
 		_draw_grid()
 	for i in range(len(vec_map)):
@@ -49,18 +54,37 @@ func _mouse_to_vec(mouse):
 	return Vector2(int(mouse.x / cell_size.x), int(mouse.y / cell_size.y))
 
 func _input(ev):
-	if ev.is_action_pressed("ui_cancel"):
-		get_tree().quit()
 	if ev is InputEventMouseMotion:
-		print(ev.is_pressed())
+		if draw_level:
+			vec_map[_xy_to_index(_mouse_to_vec(ev.position))] = 1
+		if erase_level:
+			vec_map[_xy_to_index(_mouse_to_vec(ev.position))] = 0
+	#############################################################
 	if ev is InputEventMouseButton:
 		if ev.button_index == 1 and ev.pressed:
 			vec_map[_xy_to_index(_mouse_to_vec(ev.position))] = 1
-		if ev.button_index == 2 and ev.pressed:
-			print("RMB")
+			draw_level = true	
+		elif ev.button_index == 1 and not ev.pressed:
+			draw_level = false
+		elif ev.button_index == 2 and ev.pressed:
+			vec_map[_xy_to_index(_mouse_to_vec(ev.position))] = 0
+			erase_level = true
+		elif ev.button_index == 2 and not ev.pressed:
+			erase_level = false
+	#############################################################
 	if ev is InputEventKey and ev.scancode == KEY_Q and ev.pressed and not ev.echo:
 		show_grid = !show_grid
-		# if (GetKey(olc::Key::W).bHeld) vPlayer.y -= 25.0f * fElapsedTime;
+	#############################################################
+	if ev is InputEventKey and ev.scancode == KEY_W and ev.pressed:
+		player.y -= 800.0 * elapsed_time
+	if ev is InputEventKey and ev.scancode == KEY_A and ev.pressed and ev.echo:
+		player.x -= 800.0 * elapsed_time
+	if ev is InputEventKey and ev.scancode == KEY_S and ev.pressed:
+		player.y += 800.0 * elapsed_time
+	if ev is InputEventKey and ev.scancode == KEY_D and ev.pressed and ev.echo:
+		player.x += 800.0 * elapsed_time
 		# if (GetKey(olc::Key::S).bHeld) vPlayer.y += 25.0f * fElapsedTime;
 		# if (GetKey(olc::Key::A).bHeld) vPlayer.x -= 25.0f * fElapsedTime;
 		# if (GetKey(olc::Key::D).bHeld) vPlayer.x += 25.0f * fElapsedTime;
+	if ev.is_action_pressed("ui_cancel"):
+		get_tree().quit()
