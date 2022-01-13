@@ -12,6 +12,7 @@ var show_grid = false
 var draw_level = false
 var erase_level = false
 var elapsed_time = 0
+var mouse_pos = Vector2(0, 0)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -49,6 +50,7 @@ func _draw():
 			var xy = _index_to_xy(i)
 			draw_rect(Rect2(xy.x * cell_size.x, xy.y * cell_size.y, cell_size.x, cell_size.y), Color.green)
 	draw_circle(player, cell_size.x / 2 - 1, Color.red)
+	draw_line(player, mouse_pos, Color(255, 255, 255), 2)
 
 func _mouse_to_vec(mouse):
 	return Vector2(int(mouse.x / cell_size.x), int(mouse.y / cell_size.y))
@@ -59,6 +61,7 @@ func _input(ev):
 			vec_map[_xy_to_index(_mouse_to_vec(ev.position))] = 1
 		if erase_level:
 			vec_map[_xy_to_index(_mouse_to_vec(ev.position))] = 0
+		mouse_pos = ev.position
 	#############################################################
 	if ev is InputEventMouseButton:
 		if ev.button_index == 1 and ev.pressed:
@@ -76,15 +79,12 @@ func _input(ev):
 		show_grid = !show_grid
 	#############################################################
 	if ev is InputEventKey and ev.scancode == KEY_W and ev.pressed:
-		player.y -= 800.0 * elapsed_time
+		player.y -= 400.0 * elapsed_time
 	if ev is InputEventKey and ev.scancode == KEY_A and ev.pressed and ev.echo:
-		player.x -= 800.0 * elapsed_time
+		player.x -= 400.0 * elapsed_time
 	if ev is InputEventKey and ev.scancode == KEY_S and ev.pressed:
-		player.y += 800.0 * elapsed_time
+		player.y += 400.0 * elapsed_time
 	if ev is InputEventKey and ev.scancode == KEY_D and ev.pressed and ev.echo:
-		player.x += 800.0 * elapsed_time
-		# if (GetKey(olc::Key::S).bHeld) vPlayer.y += 25.0f * fElapsedTime;
-		# if (GetKey(olc::Key::A).bHeld) vPlayer.x -= 25.0f * fElapsedTime;
-		# if (GetKey(olc::Key::D).bHeld) vPlayer.x += 25.0f * fElapsedTime;
+		player.x += 400.0 * elapsed_time
 	if ev.is_action_pressed("ui_cancel"):
 		get_tree().quit()
