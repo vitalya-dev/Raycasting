@@ -29,6 +29,12 @@ func _xy_to_index(xy):
 
 func _process(delta):
 	elapsed_time = delta
+	var mouse_cell = mouse_pos / cell_size;
+	var ray_length = Vector2(0, 0)
+	var ray_start = player;
+	var ray_dir = (mouse_cell - player).normalized();
+	var unit_step_size = Vector2(sqrt(1 + pow(2, ray_dir.y / ray_dir.x)), 
+								 sqrt(1 +  pow(2, ray_dir.x / ray_dir.y)))
 	update()
 
 func _draw_grid():
@@ -42,7 +48,6 @@ func _draw_grid():
 			draw_line(a1, b1, Color(255, 255, 255), 2)
 
 func _draw():
-	print(player)
 	if show_grid:
 		_draw_grid()
 	for i in range(len(vec_map)):
